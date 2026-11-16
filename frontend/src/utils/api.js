@@ -1,7 +1,7 @@
 import { demoApi } from './mockData';
 
-const API_BASE = process.env.REACT_APP_API_URL || '/api';
-const IS_DEMO = process.env.REACT_APP_DEMO_MODE === 'true';
+const API_BASE = import.meta.env.REACT_APP_API_URL || '/api';
+const IS_DEMO = import.meta.env.REACT_APP_DEMO_MODE === 'true';
 
 async function request(path, options = {}) {
   const url = `${API_BASE}${path}`;

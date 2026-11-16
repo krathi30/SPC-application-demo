@@ -10,14 +10,38 @@ const router = express.Router();
 const IMAGE_ROOT = process.env.SPC_IMAGE_ROOT || '/data/spc-images';
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
-
 const EXT_BY_MIME = {
   'image/jpeg': '.jpg',
   'image/png': '.png',
   'image/webp': '.webp',
   'image/gif': '.gif',
+  'image/heic': '.heic',
+  'image/heif': '.heif',
 };
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024, files: 5, fields: 40 },
+  fileFilter: (req, file, cb) => {
+    if (EXT_BY_MIME[file.mimetype]) {
+      cb(null, true);
+      return;
+    }
+    const err = new Error('Only image uploads (JPEG, PNG, WebP, GIF, HEIC) are allowed');
+    err.status = 400;
+    cb(err);
+  },
+});
+
+// Wrap multer so rejected or oversized uploads return a clear 400 instead of a 500.
+function acceptPhotos(req, res, next) {
+  upload.array('photos', 5)(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ error: err.message || 'Invalid upload' });
+    }
+    next();
+  });
+}
 
 function computeStatus(measurement, sku) {
   const checks = [
@@ -36,9 +60,9 @@ function computeStatus(measurement, sku) {
   return status;
 }
 
+// The stored extension comes from the validated MIME type, never from the
+// client-supplied file name.
 function getImageExtension(file) {
-  const originalExt = path.extname(file.originalname || '').toLowerCase();
-  if (originalExt) return originalExt;
   return EXT_BY_MIME[file.mimetype] || '.bin';
 }
 
@@ -141,7 +165,7 @@ router.get('/chart-data', async (req, res) => {
 });
 
 // POST /api/measurements - Record a new measurement
-router.post('/', upload.array('photos', 5), async (req, res) => {
+router.post('/', acceptPhotos, async (req, res) => {
   const client = await pool.connect();
   try {
     const {
@@ -268,7 +292,7 @@ router.post('/', upload.array('photos', 5), async (req, res) => {
              ) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
             [
               measurement.id,
-              file.originalname,
+              path.basename(String(file.originalname || 'photo')).slice(0, 255),
               null,
               relativePath,
               sha256,

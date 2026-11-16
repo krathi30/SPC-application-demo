@@ -1,6 +1,10 @@
 const express = require('express');
 const pool = require('../config/database');
-const { requireMaster, hashPassword, verifyPassword } = require('../middleware/auth');
+const {
+  requireMaster, hashPassword, verifyPassword, destroySessionsWhere,
+} = require('../middleware/auth');
+
+const MIN_PASSWORD_LENGTH = 8;
 const { buildSystemHealthSnapshot } = require('../utils/systemHealth');
 const {
   getEmailOverview,
@@ -532,8 +536,8 @@ router.put('/passwords/admin', async (req, res) => {
   const client = await pool.connect();
   try {
     const { new_password } = req.body;
-    if (!new_password || new_password.length < 4) {
-      return res.status(400).json({ error: 'new_password must be at least 4 characters' });
+    if (typeof new_password !== 'string' || new_password.length < MIN_PASSWORD_LENGTH) {
+      return res.status(400).json({ error: `new_password must be at least ${MIN_PASSWORD_LENGTH} characters` });
     }
 
     await client.query('BEGIN');
@@ -553,6 +557,7 @@ router.put('/passwords/admin', async (req, res) => {
       newValues: { key: 'admin_password_hash' },
     });
     await client.query('COMMIT');
+    destroySessionsWhere((session) => session.role === 'admin');
     res.json({ success: true });
   } catch (err) {
     await client.query('ROLLBACK');
@@ -568,8 +573,9 @@ router.put('/passwords/me', async (req, res) => {
   const client = await pool.connect();
   try {
     const { current_password, new_password } = req.body;
-    if (!current_password || !new_password || new_password.length < 6) {
-      return res.status(400).json({ error: 'current_password and a 6+ char new_password are required' });
+    if (typeof current_password !== 'string' || typeof new_password !== 'string'
+      || !current_password || new_password.length < MIN_PASSWORD_LENGTH) {
+      return res.status(400).json({ error: `current_password and a ${MIN_PASSWORD_LENGTH}+ char new_password are required` });
     }
 
     const existing = await client.query(
@@ -597,6 +603,8 @@ router.put('/passwords/me', async (req, res) => {
       newValues: { username: req.session.username },
     });
     await client.query('COMMIT');
+    // Sign out this account everywhere except the session that made the change.
+    destroySessionsWhere((session) => session.username === req.session.username && session !== req.session);
     res.json({ success: true });
   } catch (err) {
     await client.query('ROLLBACK');
@@ -625,8 +633,9 @@ router.post('/master-accounts', async (req, res) => {
   const client = await pool.connect();
   try {
     const { username, password } = req.body;
-    if (!username || !password || password.length < 6) {
-      return res.status(400).json({ error: 'username and 6+ char password are required' });
+    if (typeof username !== 'string' || typeof password !== 'string'
+      || !username.trim() || password.length < MIN_PASSWORD_LENGTH) {
+      return res.status(400).json({ error: `username and ${MIN_PASSWORD_LENGTH}+ char password are required` });
     }
 
     await client.query('BEGIN');
@@ -680,6 +689,7 @@ router.delete('/master-accounts/:id', async (req, res) => {
       oldValues: target,
     });
     await client.query('COMMIT');
+    destroySessionsWhere((session) => session.role === 'master' && session.username === target.username);
     res.json({ success: true });
   } catch (err) {
     await client.query('ROLLBACK');

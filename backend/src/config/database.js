@@ -1,11 +1,15 @@
 const { Pool } = require('pg');
 
+if (process.env.NODE_ENV === 'production' && !process.env.DB_PASSWORD) {
+  throw new Error('DB_PASSWORD must be set in production');
+}
+
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '5432', 10),
   database: process.env.DB_NAME || 'spc_db',
   user: process.env.DB_USER || 'spc_user',
-  password: process.env.DB_PASSWORD || 'spc_password',
+  password: process.env.DB_PASSWORD || 'spc_dev_password',
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,

@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_DB: spc_db
       POSTGRES_USER: spc_user
-      POSTGRES_PASSWORD: spc_password
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env (see .env.example)}
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./backups:/backups
@@ -19,6 +19,7 @@ services:
 
   # Node.js Backend API
   backend:
+    image: spc-backend:${APP_TAG:-fixed}
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -27,11 +28,14 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3001
+      TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-1}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      APP_ORIGIN: ${APP_ORIGIN:-}
       DB_HOST: db
       DB_PORT: 5432
       DB_NAME: spc_db
       DB_USER: spc_user
-      DB_PASSWORD: spc_password
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env (see .env.example)}
       SPC_IMAGE_ROOT: /data/spc-images
       SPC_BACKUP_ROOT: /backups
       REQUEST_LOG_DIR: /data/logs
@@ -68,19 +72,20 @@ services:
 
   # Email worker
   email-worker:
+    image: spc-backend:${APP_TAG:-fixed}
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: spc-email-worker
     restart: unless-stopped
-    command: npm run email-worker
+    command: ["node", "src/workers/emailWorker.js"]
     environment:
       NODE_ENV: production
       DB_HOST: db
       DB_PORT: 5432
       DB_NAME: spc_db
       DB_USER: spc_user
-      DB_PASSWORD: spc_password
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env (see .env.example)}
       SPC_IMAGE_ROOT: /data/spc-images
       SPC_BACKUP_ROOT: /backups
       REQUEST_LOG_DIR: /data/logs
@@ -106,6 +111,7 @@ services:
 
   # Nginx Frontend
   frontend:
+    image: spc-frontend:${APP_TAG:-fixed}
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -114,7 +120,7 @@ services:
     container_name: spc-frontend
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "${HTTP_PORT:-80}:8080"
     depends_on:
       backend:
         condition: service_healthy

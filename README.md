@@ -40,19 +40,47 @@ On-premise SPC (Statistical Process Control) monitoring application for the Klon
 git clone <repo-url>
 cd SPC-application-demo
 
-# Build and start all containers
+# Create .env from the template and set DB_PASSWORD (required)
+cp .env.example .env
+#   e.g. DB_PASSWORD=$(openssl rand -base64 32)
+
+# Build and start all containers (images are tagged spc-backend:fixed / spc-frontend:fixed)
 docker compose up -d --build
+
+# Create the first master account and the admin password (there is no default password)
+docker exec -it spc-backend node src/scripts/setup-master.js
 
 # The app is now running at http://<server-ip>:80
 ```
+
+### CPU architecture (Intel/AMD vs ARM / AWS Graviton)
+
+Every image is built on multi-arch bases (`node:24-alpine`, `nginx:stable-alpine`,
+`postgres:16-alpine`) and the backend has no native modules, so the stack runs on
+both `linux/amd64` (e.g. EC2 t3) and `linux/arm64` (e.g. EC2 t4g / Graviton).
+
+Build on the server itself, or build for the server's architecture explicitly. An
+image built on an Apple Silicon Mac is arm64 and will fail on an x86 EC2 instance
+with `exec format error`:
+
+```bash
+docker buildx build --platform linux/amd64 -t spc-backend:fixed backend
+docker buildx build --platform linux/amd64 -t spc-frontend:fixed frontend
+```
+
+### Behind HTTPS / a load balancer
+
+- `TRUST_PROXY_HOPS` (in `.env`): `1` when nginx is the only proxy, `2` when another
+  proxy or load balancer (e.g. a Let's Encrypt reverse proxy or AWS ALB) sits in front.
+- Once the site is served only over HTTPS, set `COOKIE_SECURE=true`.
 
 ### Access
 
 - **Operator UI**: `http://<server-ip>/` (port 80)
 - **Admin Dashboard**: `http://<server-ip>/admin`
-- **Master Owner Login**: `http://<server-ip>/admin` using username + password created by `node backend/src/scripts/setup-master.js`
+- **Master Owner Login**: `http://<server-ip>/admin` using username + password created by `docker exec -it spc-backend node src/scripts/setup-master.js`
 - **API Health Check**: `http://<server-ip>/api/health`
-- **Detailed Health Check**: `http://<server-ip>/api/health/detailed`
+- **Detailed Health Check**: `http://<server-ip>/api/health/detailed` (requires an admin or master login)
 - Only port 80 is exposed to users. The backend API and PostgreSQL database stay internal to the Docker network.
 
 ### Stop / Restart
@@ -88,11 +116,16 @@ New measurement images are no longer stored inline in PostgreSQL. The backend wr
 - **Admin**: shared password stored in `master_config.admin_password_hash`
 - **Master Owner**: individual username + password stored in `master_accounts`
 
-Initial master/admin credentials are created with:
+Initial master/admin credentials are created with (passwords must be at least 8 characters;
+admin login is disabled until this has been run):
 
 ```bash
-node backend/src/scripts/setup-master.js
+docker exec -it spc-backend node src/scripts/setup-master.js
 ```
+
+Failed logins are throttled: after 5 failures from one IP within 15 minutes, further
+attempts get HTTP 429 until the window passes. Changing the admin password signs out
+all admin sessions.
 
 SMTP settings are captured during deployment with:
 
@@ -120,7 +153,7 @@ That script writes a repo-root `.env` file. Docker Compose reads it automaticall
 
 ```
 .
-├── docker-compose.yml          # Docker orchestration (3 services)
+├── docker-compose.yml          # Docker orchestration (db, backend, email-worker, frontend)
 ├── backend/
 │   ├── Dockerfile
 │   ├── package.json
@@ -141,18 +174,18 @@ That script writes a repo-root `.env` file. Docker Compose reads it automaticall
 │   ├── Dockerfile
 │   ├── nginx.conf              # Nginx config with API proxy
 │   ├── package.json
-│   ├── public/
-│   │   └── index.html
+│   ├── vite.config.mjs         # Vite build config
+│   ├── index.html
 │   └── src/
-│       ├── App.js              # React Router setup
-│       ├── index.js            # React entry point
+│       ├── App.jsx             # React Router setup
+│       ├── index.jsx           # React entry point
 │       ├── components/
-│       │   └── SPCChart.js     # Chart.js SPC chart component
+│       │   └── SPCChart.jsx    # Chart.js SPC chart component
 │       ├── pages/
-│       │   ├── LineSelection.js    # Page 1: Pick production line
-│       │   ├── SkuSelection.js     # Page 2: Pick SKU + confirmation
-│       │   ├── SPCWorkspace.js     # Page 3: Main SPC data entry
-│       │   └── AdminDashboard.js   # Admin: history, reports, export
+│       │   ├── LineSelection.jsx   # Page 1: Pick production line
+│       │   ├── SkuSelection.jsx    # Page 2: Pick SKU + confirmation
+│       │   ├── SPCWorkspace.jsx    # Page 3: Main SPC data entry
+│       │   └── AdminDashboard.jsx  # Admin: history, reports, export
 │       ├── styles/
 │       │   └── global.css      # All CSS (matching original design)
 │       └── utils/

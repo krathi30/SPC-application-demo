@@ -6,6 +6,7 @@ const {
   requireAdmin, requireMaster, createSession,
   setSessionCookie, clearSessionCookie, destroySession,
   verifyPassword, hashPassword, getSession,
+  loginThrottle, recordLoginFailure, clearLoginFailures,
 } = require('../middleware/auth');
 
 const CORRECTION_REASON_CODES = new Set([
@@ -23,22 +24,24 @@ const CORRECTION_REASON_CODES = new Set([
 // ============================================================
 
 // POST /api/admin/login — Admin shared password login
-router.post('/login', async (req, res) => {
+router.post('/login', loginThrottle, async (req, res) => {
   try {
     const { password } = req.body;
-    if (!password) {
+    if (typeof password !== 'string' || !password) {
       return res.status(400).json({ error: 'Password is required' });
     }
 
+    // No built-in default password: the admin password must be set with
+    // `npm run setup` (or by a master account) before admin login works.
     const config = await pool.query("SELECT value FROM master_config WHERE key = 'admin_password_hash'");
     if (config.rows.length === 0) {
-      const fallbackPassword = process.env.ADMIN_PASSWORD || 'Klondike@12345';
-      if (password !== fallbackPassword) {
-        return res.status(401).json({ error: 'Incorrect password' });
-      }
-    } else if (!verifyPassword(password, config.rows[0].value)) {
+      return res.status(503).json({ error: 'Admin password has not been configured. Run the setup script first.' });
+    }
+    if (!verifyPassword(password, config.rows[0].value)) {
+      recordLoginFailure(req);
       return res.status(401).json({ error: 'Incorrect password' });
     }
+    clearLoginFailures(req);
 
     const token = createSession('admin', 'admin');
     setSessionCookie(res, token);
@@ -50,10 +53,10 @@ router.post('/login', async (req, res) => {
 });
 
 // POST /api/admin/master-login — Master owner login
-router.post('/master-login', async (req, res) => {
+router.post('/master-login', loginThrottle, async (req, res) => {
   try {
     const { username, password } = req.body;
-    if (!username || !password) {
+    if (typeof username !== 'string' || typeof password !== 'string' || !username || !password) {
       return res.status(400).json({ error: 'Username and password are required' });
     }
 
@@ -61,13 +64,11 @@ router.post('/master-login', async (req, res) => {
       'SELECT id, username, password_hash FROM master_accounts WHERE username = $1',
       [username.toLowerCase()]
     );
-    if (result.rows.length === 0) {
+    if (result.rows.length === 0 || !verifyPassword(password, result.rows[0].password_hash)) {
+      recordLoginFailure(req);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-
-    if (!verifyPassword(password, result.rows[0].password_hash)) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
+    clearLoginFailures(req);
 
     const token = createSession('master', result.rows[0].username);
     setSessionCookie(res, token);

@@ -128,8 +128,8 @@ function SPCWorkspace({ lines, skus }) {
       }
 
       const [chart, recent] = await Promise.all([
-        getChartData(queryParams),
-        getMeasurements({ ...queryParams, limit: 50 }),
+        apiGetChartData(queryParams),
+        apiGetMeasurements({ ...queryParams, limit: 50 }),
       ]);
       setChartData(chart);
       setRecentEntries(recent);
@@ -183,7 +183,7 @@ function SPCWorkspace({ lines, skus }) {
     if (!form.operator_initials.trim() || !productionOrder) return;
 
     try {
-      const result = await withRetry(() => createMeasurement({
+      const result = await withRetry(() => apiCreateMeasurement({
         sku_id: productionOrder.skuId,
         line_id: productionOrder.lineId,
         freezer_number: activeFreezer,
@@ -265,7 +265,7 @@ function SPCWorkspace({ lines, skus }) {
 
     setIsSubmittingReport(true);
     try {
-      const report = await withRetry(() => createReport({
+      const report = await withRetry(() => apiCreateReport({
         line_id: productionOrder.lineId,
         sku_id: productionOrder.skuId,
         shift: productionOrder.shift,
@@ -280,7 +280,7 @@ function SPCWorkspace({ lines, skus }) {
 
       if (productionOrder.productionOrderId) {
         try {
-          await completeProductionOrder(productionOrder.productionOrderId);
+          await apiCompleteProductionOrder(productionOrder.productionOrderId);
         } catch (e) {
           console.warn('Could not complete production order:', e);
         }
@@ -297,7 +297,7 @@ function SPCWorkspace({ lines, skus }) {
 
   const handleDownloadPdf = async (reportId) => {
     try {
-      const blob = await getReportPdf(reportId);
+      const blob = await apiGetReportPdf(reportId);
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;

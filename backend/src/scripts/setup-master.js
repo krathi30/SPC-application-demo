@@ -135,8 +135,8 @@ async function main() {
     let confirm = '';
     while (true) {
       password = await questionHidden(rl, 'Master Password: ');
-      if (password.length < 6) {
-        console.log('  Password must be at least 6 characters.');
+      if (password.length < 8) {
+        console.log('  Password must be at least 8 characters.');
         continue;
       }
       confirm = await questionHidden(rl, 'Confirm Password: ');
@@ -163,8 +163,8 @@ async function main() {
       console.log('Set the ADMIN shared password (used by quality team, supervisors, managers):');
       while (true) {
         adminPassword = await questionHidden(rl, 'Admin Password: ');
-        if (adminPassword.length < 4) {
-          console.log('  Password must be at least 4 characters.');
+        if (adminPassword.length < 8) {
+          console.log('  Password must be at least 8 characters.');
           continue;
         }
         confirm = await questionHidden(rl, 'Confirm Admin Password: ');

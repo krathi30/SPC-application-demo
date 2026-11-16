@@ -7,7 +7,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { ProductionOrderProvider } from './context/ProductionOrderContext';
 import { getLines, getSkus } from './utils/api';
 
-const IS_DEMO = process.env.REACT_APP_DEMO_MODE === 'true';
+const IS_DEMO = import.meta.env.REACT_APP_DEMO_MODE === 'true';
 
 function App() {
   const [lines, setLines] = useState([]);

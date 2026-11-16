@@ -35,3 +35,10 @@ pgdata/
 # Zip artifacts
 *.zip
 spc-app/
+
+# Runtime data written by the containers (photos, logs, DB backups)
+data/
+backups/
+
+# Local-only build helpers
+.ca-test.crt

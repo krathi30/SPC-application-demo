@@ -12,6 +12,7 @@ const migrateV3 = require('./config/migrate_v3');
 const migrateV4 = require('./config/migrate_v4');
 const { seed } = require('./seeds/seedData');
 const { buildSystemHealthSnapshot } = require('./utils/systemHealth');
+const { requireAdmin } = require('./middleware/auth');
 
 const linesRouter = require('./routes/lines');
 const skusRouter = require('./routes/skus');
@@ -22,6 +23,11 @@ const masterConfigRouter = require('./routes/masterConfig');
 const productionOrdersRouter = require('./routes/productionOrders');
 
 const app = express();
+app.disable('x-powered-by');
+// Number of reverse proxies in front of the API (nginx = 1; nginx behind an AWS
+// load balancer = 2). Needed so login throttling sees the real client IP and so
+// cookies are marked Secure when the original request was HTTPS.
+app.set('trust proxy', parseInt(process.env.TRUST_PROXY_HOPS || '1', 10));
 const PORT = process.env.PORT || 3001;
 const IMAGE_ROOT = process.env.SPC_IMAGE_ROOT || '/data/spc-images';
 const BACKUP_ROOT = process.env.SPC_BACKUP_ROOT || '/backups';
@@ -89,8 +95,8 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
 
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 app.use('/api/lines', linesRouter);
 app.use('/api/skus', skusRouter);
@@ -104,7 +110,8 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.get('/api/health/detailed', async (req, res) => {
+// Detailed health exposes SMTP, disk and row-count details, so it is admin-only.
+app.get('/api/health/detailed', requireAdmin, async (req, res) => {
   try {
     const snapshot = await buildSystemHealthSnapshot();
     res.json(snapshot);
