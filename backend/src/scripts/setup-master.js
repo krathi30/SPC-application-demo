@@ -16,6 +16,7 @@
  */
 
 const readline = require('readline');
+const { PLANT_LABEL } = require('../config/branding');
 const pool = require('../config/database');
 const { hashPassword, verifyPassword } = require('../middleware/auth');
 
@@ -88,7 +89,7 @@ async function main() {
   console.log('');
   console.log('╔══════════════════════════════════════════╗');
   console.log('║   SPC System — Master Account Setup      ║');
-  console.log('║   Plant #1352, Covington                  ║');
+  console.log(`  ${PLANT_LABEL}`);
   console.log('╚══════════════════════════════════════════╝');
   console.log('');
 

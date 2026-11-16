@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { BRAND_NAME, BRAND_SUBTEXT, PLANT_LABEL } from '../config/branding';
 
 function SkuSelection({ lines, skus }) {
   const navigate = useNavigate();
@@ -31,8 +32,8 @@ function SkuSelection({ lines, skus }) {
       </button>
 
       <div className="logo-fallback" style={{ marginBottom: '1rem' }}>
-        <div className="logo-text">KLONDIKE</div>
-        <div className="logo-subtext">DEPARTMENT</div>
+        <div className="logo-text">{BRAND_NAME}</div>
+        <div className="logo-subtext">{BRAND_SUBTEXT}</div>
       </div>
 
       <h1 className="page-title">{line ? line.display_name : 'Line'} - Select SKU</h1>

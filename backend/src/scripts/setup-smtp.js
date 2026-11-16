@@ -12,6 +12,7 @@
  */
 
 const fs = require('fs');
+const { PLANT_LABEL } = require('../config/branding');
 const path = require('path');
 const readline = require('readline');
 
@@ -137,7 +138,7 @@ async function main() {
   console.log('');
   console.log('╔══════════════════════════════════════════╗');
   console.log('║      SPC System — SMTP Setup             ║');
-  console.log('║      Plant #1352, Covington              ║');
+  console.log(`  ${PLANT_LABEL}`);
   console.log('╚══════════════════════════════════════════╝');
   console.log('');
   console.log(`This will write SMTP settings into: ${ENV_PATH}`);

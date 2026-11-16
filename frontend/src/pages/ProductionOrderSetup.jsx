@@ -7,6 +7,7 @@ import {
   withRetry,
 } from '../utils/api';
 import { getTodayShiftDate, formatDate } from '../utils/helpers';
+import { BRAND_NAME, BRAND_SUBTEXT, PLANT_LABEL } from '../config/branding';
 
 const STEPS = [
   { key: 'line', label: 'Line' },
@@ -177,7 +178,7 @@ function ProductionOrderSetup({ lines, skus }) {
       <div className="selection-page" style={{ position: 'relative' }}>
         <div style={{ marginBottom: '0.5rem', textAlign: 'center' }}>
           <div style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '3px', color: 'var(--text)' }}>
-            KLONDIKE
+            {BRAND_NAME}
           </div>
           <div style={{ fontSize: '0.7rem', letterSpacing: '2px', color: 'var(--text-light)', textTransform: 'uppercase' }}>
             SPC Control Chart System
@@ -608,7 +609,7 @@ function ProductionOrderSetup({ lines, skus }) {
       {/* Title */}
       <div style={{ marginBottom: '0.5rem', textAlign: 'center' }}>
         <div style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '3px', color: 'var(--text)' }}>
-          KLONDIKE
+          {BRAND_NAME}
         </div>
         <div style={{ fontSize: '0.7rem', letterSpacing: '2px', color: 'var(--text-light)', textTransform: 'uppercase' }}>
           SPC Control Chart System

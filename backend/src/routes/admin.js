@@ -1,4 +1,5 @@
 const express = require('express');
+const { PLANT_LABEL } = require('../config/branding');
 const router = express.Router();
 const pool = require('../config/database');
 const ExcelJS = require('exceljs');
@@ -685,7 +686,7 @@ router.get('/export/excel', requireAdmin, async (req, res) => {
       useStyles: true,
       useSharedStrings: true,
     });
-    workbook.creator = 'SPC Control Chart System - Plant #1352';
+    workbook.creator = `SPC Control Chart System - ${PLANT_LABEL}`;
     workbook.created = new Date();
 
     const sheet = workbook.addWorksheet('SPC Data');

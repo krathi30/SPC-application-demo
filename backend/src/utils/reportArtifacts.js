@@ -1,4 +1,5 @@
 const { PassThrough } = require('stream');
+const { PLANT_LABEL } = require('../config/branding');
 const PDFDocument = require('pdfkit');
 const pool = require('../config/database');
 
@@ -221,7 +222,7 @@ function drawZoneBar(doc, x, y, width, height) {
 
 function drawShiftReportHeader(doc, report) {
   doc.font('Helvetica-Bold').fontSize(16).text('FILLER SPC CONTROL CHART', { align: 'center' });
-  doc.font('Helvetica').fontSize(9).text('Plant #1352, Covington', { align: 'center' });
+  doc.font('Helvetica').fontSize(9).text(PLANT_LABEL, { align: 'center' });
   doc.moveDown(0.5);
 
   const rows = [
@@ -380,7 +381,7 @@ function renderShiftReportPdfBuffer(context) {
 
 function drawDigestSummaryPage(doc, digest) {
   doc.font('Helvetica-Bold').fontSize(16).text('SPC DAILY DIGEST', { align: 'center' });
-  doc.font('Helvetica').fontSize(9).text('Plant #1352, Covington', { align: 'center' });
+  doc.font('Helvetica').fontSize(9).text(PLANT_LABEL, { align: 'center' });
   doc.moveDown(0.4);
   doc.fontSize(9).text(`Digest Date: ${safeText(digest.digestDate)}`);
   doc.text(`Shift Reports: ${digest.totals.reports}`);
@@ -495,7 +496,7 @@ function renderDailyDigestPdfBuffer(digest) {
 function buildReportCsv(context) {
   const { report, groups } = context;
   const lines = [
-    `Plant,${escapeCsv('Plant #1352, Covington')}`,
+    `Plant,${escapeCsv(PLANT_LABEL)}`,
     `PO Number,${escapeCsv(report.po_number)}`,
     `Line,${escapeCsv(report.line_name)}`,
     `Product,${escapeCsv(`${report.product_name} (${report.product_code})`)}`,

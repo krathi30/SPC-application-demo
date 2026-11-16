@@ -1,6 +1,6 @@
-# SPC Control Chart Application - Klondike Department
+# SPC Control Chart Application
 
-On-premise SPC (Statistical Process Control) monitoring application for the Klondike Department at Plant #1352, Covington. Designed for operators to record quality measurements every 30 minutes from production line freezers using laptops, HMIs, and iPads.
+SPC (Statistical Process Control) monitoring application for a frozen-dessert production floor. Designed for operators to record quality measurements every 30 minutes from production line freezers using laptops, HMIs, and iPads.
 
 ## Architecture
 
@@ -208,23 +208,30 @@ That script writes a repo-root `.env` file. Docker Compose reads it automaticall
    - View real-time SPC charts updating
    - At end of shift: Submit Shift Report with supervisor sign-off
 
-## SKUs Included
+## Demo Data
 
-| Product | Code | Thickness Target | Weight Target | Coating Target |
-|---------|------|-----------------|---------------|----------------|
-| Klondike Reese's PB Cup | 68300738 | 17.8 | 59.5 | 18.0 |
-| Klondike Original MTB | 68689251 | 19.6 | 62.3 | 23.0 |
-| Klondike SAB RF NSA Vanilla | 68709233 | 17.8 | 56.5 | 18.0 |
-| Klondike Chocolate/Chocolate | 68709237 | 19.6 | 62.1 | 23.0 |
-| Klondike SAB NSA Krunch | 68710277 | 17.9 | 57.1 | 15.4 |
-| Klondike Krunch Bars | 68710285 | 18.1 | 57.4 | 24.6 |
-| Klondike Mint Choc. Chip 12-6PK | 68746232 | 17.7 | 55.7 | 21.3 |
-| Klondike Cookies & Creme 12-6PK | 68852583 | 16.8 | 52.9 | 22.1 |
-| Klondike Heath | 68852591 | 17.2 | 52.1 | 20.4 |
-| Klondike Dark Chocolate | 68921994 | 19.6 | 62.1 | 23.0 |
-| Klondike Original (69548143) | 69548143 | 20.1 | 62.3 | 23.0 |
-| Klondike Reese's (69549032) | 69549032 | 17.0 | 50.4 | 17.0 |
-| Klondike Reese's (69779478) | 69779478 | 17.0 | 50.4 | 17.0 |
+All lines, products and limits in this repository belong to a fictional company,
+**Northwind Creamery** (`backend/src/seeds/seedData.js`). They are not real
+specifications.
+
+Every parameter (slice thickness, slice weight, coating weight) has five limits,
+symmetric around the target, with the control limits twice as far out as the
+warning limits:
+
+| Limit | Value | Reading outside it is... |
+|-------|-------|--------------------------|
+| UCL / LCL (control) | target ± 2w | out of control (red, needs acknowledgement) |
+| UWL / LWL (warning) | target ± w | a warning (amber) |
+
+Example, Vanilla Classic Bars slice weight: target 60.0, w = 2.0, so
+LWL/UWL = 58.0 / 62.0 and LCL/UCL = 56.0 / 64.0. The seed refuses to load a
+product whose limits are not in the order LCL ≤ LWL ≤ Target ≤ UWL ≤ UCL.
+
+**Running a real site:** keep the real catalogue out of Git. Put it in a JSON
+file on the server (`{ "lines": [...], "skus": [...] }`, same fields as the
+seed file), mount it into the backend container and set `SEED_FILE` to its
+path. Set `PLANT_LABEL` (backend, printed on reports) and `REACT_APP_BRAND_NAME`,
+`REACT_APP_BRAND_SUBTEXT`, `REACT_APP_PLANT_LABEL` (frontend build) privately too.
 
 ## API Endpoints
 

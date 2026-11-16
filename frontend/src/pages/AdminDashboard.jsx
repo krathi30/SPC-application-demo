@@ -42,6 +42,7 @@ import {
   sendMasterEmailTest,
 } from '../utils/api';
 import { formatTime, formatDate, downloadText, downloadBlob } from '../utils/helpers';
+import { BRAND_NAME, BRAND_SUBTEXT, PLANT_LABEL } from '../config/branding';
 
 const INITIAL_FILTERS = {
   line_id: '',
@@ -704,7 +705,7 @@ function AdminDashboard({ lines, skus, onConfigChanged }) {
         style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
       >
         <div className="logo-fallback" style={{ marginBottom: '2rem' }}>
-          <div className="logo-text">KLONDIKE</div>
+          <div className="logo-text">{BRAND_NAME}</div>
           <div className="logo-subtext">ADMIN ACCESS</div>
         </div>
         <div className="premium-card" style={{ maxWidth: '460px', width: '100%' }}>
@@ -800,7 +801,7 @@ function AdminDashboard({ lines, skus, onConfigChanged }) {
         <div className="header-branding">
           <div className="logo-container">
             <div className="logo-fallback">
-              <div className="logo-text" style={{ fontSize: '1.2rem' }}>KLONDIKE</div>
+              <div className="logo-text" style={{ fontSize: '1.2rem' }}>{BRAND_NAME}</div>
               <div className="logo-subtext">ADMIN DASHBOARD</div>
             </div>
           </div>
@@ -808,7 +809,7 @@ function AdminDashboard({ lines, skus, onConfigChanged }) {
             <h1>SPC Data Dashboard</h1>
             <div className="header-details">
               <div className="header-field">
-                <label>Plant #1352, Covington</label>
+                <label>{PLANT_LABEL}</label>
               </div>
               <div className="header-field">
                 <label>Role</label>

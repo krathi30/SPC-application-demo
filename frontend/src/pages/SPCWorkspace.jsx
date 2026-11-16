@@ -13,6 +13,7 @@ import {
   withRetry,
 } from '../utils/api';
 import { formatTime, formatDate, getStatus, getShiftTimeOfDay } from '../utils/helpers';
+import { BRAND_NAME, BRAND_SUBTEXT, PLANT_LABEL } from '../config/branding';
 
 // Generate UUID for idempotency
 function generateClientId() {
@@ -356,7 +357,7 @@ function SPCWorkspace({ lines, skus }) {
         <div className="header-branding">
           <div className="logo-container">
             <div className="logo-fallback">
-              <div className="logo-text" style={{ fontSize: '1.2rem' }}>KLONDIKE</div>
+              <div className="logo-text" style={{ fontSize: '1.2rem' }}>{BRAND_NAME}</div>
               <div className="logo-subtext">SPC CONTROL CHART</div>
             </div>
           </div>

@@ -9,7 +9,7 @@ The Claude blueprint work is implemented on this branch across the Postgres back
 
 - `migrate_v3.js` schema additions for PO number, review lock, `line_freezers`, audit log, `client_id`, versioning, ack fields, image metadata, `master_accounts`, `master_config`, indexes, and line activation.
 - Operator flow updates for required PO number, active-order recovery, dual-pump routing, idempotent measurement submission, OOC acknowledgment, and reviewed-order lock enforcement.
-- Batch report rewrite with CR-2150_4-style PDF structure and per-batch CSV export.
+- Batch report rewrite with batch PDF structure and per-batch CSV export.
 - Three-tier admin/master auth, master setup CLI, corrections with reason code + comment, production-order review lock, audit visibility, and master-only config endpoints/UI.
 - Production hardening for filesystem image storage, backups, security headers, request logging, DB retry, graceful shutdown, same-origin CORS, and detailed health reporting.
 - SMTP email delivery for shift reports and daily digests with `email_queue`, recipient lists, a dedicated worker, and master-only email management in the admin dashboard.

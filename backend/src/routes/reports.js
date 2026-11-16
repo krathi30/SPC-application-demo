@@ -1,4 +1,5 @@
 const express = require('express');
+const { PLANT_LABEL } = require('../config/branding');
 const PDFDocument = require('pdfkit');
 const pool = require('../config/database');
 const {
@@ -141,7 +142,7 @@ async function fetchReportContext(client, reportId) {
 function buildCsv(context) {
   const { report, groups } = context;
   const lines = [
-    `Plant,${escapeCsv('Plant #1352, Covington')}`,
+    `Plant,${escapeCsv(PLANT_LABEL)}`,
     `PO Number,${escapeCsv(report.po_number)}`,
     `Line,${escapeCsv(report.line_name)}`,
     `Product,${escapeCsv(`${report.product_name} (${report.product_code})`)}`,
@@ -192,7 +193,7 @@ function drawZoneBar(doc, x, y, width, height) {
 
 function drawPageHeader(doc, report) {
   doc.font('Helvetica-Bold').fontSize(16).text('FILLER SPC CONTROL CHART', { align: 'center' });
-  doc.font('Helvetica').fontSize(9).text('Plant #1352, Covington', { align: 'center' });
+  doc.font('Helvetica').fontSize(9).text(PLANT_LABEL, { align: 'center' });
   doc.moveDown(0.5);
 
   const rows = [

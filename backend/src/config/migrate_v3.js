@@ -152,7 +152,7 @@ const migrateV3 = async () => {
       console.log('Seeding line_freezers from existing lines...');
       const linesResult = await client.query(`SELECT id, name, freezer_count FROM lines`);
       for (const line of linesResult.rows) {
-        // Klondike 2 and 3 (line_2, line_3) have dual pumps
+        // Lines 2 and 3 (line_2, line_3) have dual pumps
         const pumpCount = (line.name === 'line_2' || line.name === 'line_3') ? 2 : 1;
         for (let f = 1; f <= line.freezer_count; f++) {
           await client.query(
