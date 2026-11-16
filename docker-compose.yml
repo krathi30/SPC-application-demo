@@ -1,3 +1,6 @@
+# Fixed project name so container/network names are the same on every machine.
+name: spc-demo
+
 services:
   # PostgreSQL Database
   db:

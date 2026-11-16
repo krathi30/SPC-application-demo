@@ -1,6 +1,6 @@
-# SPC Control Chart Application
+# SPC Control Chart Application - Aurora Department
 
-SPC (Statistical Process Control) monitoring application for a frozen-dessert production floor. Designed for operators to record quality measurements every 30 minutes from production line freezers using laptops, HMIs, and iPads.
+SPC (Statistical Process Control) monitoring application for the Aurora Department at Plant #0417, Fairview, of the Northwind Creamery Company (a fictional demo company). Designed for operators to record quality measurements every 30 minutes from production line freezers using laptops, HMIs, and iPads.
 
 ## Architecture
 
@@ -211,8 +211,8 @@ That script writes a repo-root `.env` file. Docker Compose reads it automaticall
 
 ## Demo Data
 
-All lines, products and limits in this repository belong to a fictional company,
-**Northwind Creamery** (`backend/src/seeds/seedData.js`). They are not real
+All names, lines, products and limits in this repository belong to a fictional company,
+**The Northwind Creamery Company** (Aurora Department, Plant #0417, Fairview) (`backend/src/seeds/seedData.js`). They are not real
 specifications.
 
 Every parameter (slice thickness, slice weight, coating weight) has five limits,
@@ -224,15 +224,15 @@ warning limits:
 | UCL / LCL (control) | target ± 2w | out of control (red, needs acknowledgement) |
 | UWL / LWL (warning) | target ± w | a warning (amber) |
 
-Example, Vanilla Classic Bars slice weight: target 60.0, w = 2.0, so
+Example, Aurora Vanilla Classic Bars slice weight: target 60.0, w = 2.0, so
 LWL/UWL = 58.0 / 62.0 and LCL/UCL = 56.0 / 64.0. The seed refuses to load a
 product whose limits are not in the order LCL ≤ LWL ≤ Target ≤ UWL ≤ UCL.
 
 **Running a real site:** keep the real catalogue out of Git. Put it in a JSON
 file on the server (`{ "lines": [...], "skus": [...] }`, same fields as the
 seed file), mount it into the backend container and set `SEED_FILE` to its
-path. Set `PLANT_LABEL` (backend, printed on reports) and `REACT_APP_BRAND_NAME`,
-`REACT_APP_BRAND_SUBTEXT`, `REACT_APP_PLANT_LABEL` (frontend build) privately too.
+path. Set `PLANT_LABEL` (backend, printed on reports) and `REACT_APP_COMPANY_NAME`,
+`REACT_APP_COMPANY_TAGLINE`, `REACT_APP_BRAND_NAME`, `REACT_APP_BRAND_SUBTEXT`, `REACT_APP_PLANT_LABEL` (frontend build) privately too.
 
 ## API Endpoints
 

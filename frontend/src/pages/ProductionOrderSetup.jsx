@@ -7,7 +7,7 @@ import {
   withRetry,
 } from '../utils/api';
 import { getTodayShiftDate, formatDate } from '../utils/helpers';
-import { BRAND_NAME, BRAND_SUBTEXT, PLANT_LABEL } from '../config/branding';
+import BrandHeader from '../components/BrandHeader';
 
 const STEPS = [
   { key: 'line', label: 'Line' },
@@ -176,14 +176,7 @@ function ProductionOrderSetup({ lines, skus }) {
   if (showRecovery && activeOrders.length > 0) {
     return (
       <div className="selection-page" style={{ position: 'relative' }}>
-        <div style={{ marginBottom: '0.5rem', textAlign: 'center' }}>
-          <div style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '3px', color: 'var(--text)' }}>
-            {BRAND_NAME}
-          </div>
-          <div style={{ fontSize: '0.7rem', letterSpacing: '2px', color: 'var(--text-light)', textTransform: 'uppercase' }}>
-            SPC Control Chart System
-          </div>
-        </div>
+        <BrandHeader />
 
         <div style={{ textAlign: 'center', width: '100%', maxWidth: '650px' }}>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>
@@ -607,14 +600,7 @@ function ProductionOrderSetup({ lines, skus }) {
       </button>
 
       {/* Title */}
-      <div style={{ marginBottom: '0.5rem', textAlign: 'center' }}>
-        <div style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '3px', color: 'var(--text)' }}>
-          {BRAND_NAME}
-        </div>
-        <div style={{ fontSize: '0.7rem', letterSpacing: '2px', color: 'var(--text-light)', textTransform: 'uppercase' }}>
-          SPC Control Chart System
-        </div>
-      </div>
+      <BrandHeader />
 
       {/* Stepper */}
       {renderStepper()}

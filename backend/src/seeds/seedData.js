@@ -4,39 +4,39 @@ const pool = require('../config/database');
 const DEMO_LINES = [
   {
     name: 'line_1',
-    display_name: 'Line 1',
+    display_name: 'Aurora 1',
     freezer_count: 4,
-    asset_id: 'DEMO-L1',
+    asset_id: 'PLT0417-L1',
     freezers: [
-      { freezer_number: 1, pump_count: 1, asset_id: 'DEMO-L1-FRZ01' },
-      { freezer_number: 2, pump_count: 1, asset_id: 'DEMO-L1-FRZ02' },
-      { freezer_number: 3, pump_count: 1, asset_id: 'DEMO-L1-FRZ03' },
-      { freezer_number: 4, pump_count: 1, asset_id: 'DEMO-L1-FRZ04' },
+      { freezer_number: 1, pump_count: 1, asset_id: 'PLT0417-L1-FRZ01' },
+      { freezer_number: 2, pump_count: 1, asset_id: 'PLT0417-L1-FRZ02' },
+      { freezer_number: 3, pump_count: 1, asset_id: 'PLT0417-L1-FRZ03' },
+      { freezer_number: 4, pump_count: 1, asset_id: 'PLT0417-L1-FRZ04' },
     ],
   },
   {
     name: 'line_2',
-    display_name: 'Line 2',
+    display_name: 'Aurora 2',
     freezer_count: 2,
-    asset_id: 'DEMO-L2',
+    asset_id: 'PLT0417-L2',
     freezers: [
-      { freezer_number: 1, pump_count: 2, asset_id: 'DEMO-L2-FRZ01' },
-      { freezer_number: 2, pump_count: 2, asset_id: 'DEMO-L2-FRZ02' },
+      { freezer_number: 1, pump_count: 2, asset_id: 'PLT0417-L2-FRZ01' },
+      { freezer_number: 2, pump_count: 2, asset_id: 'PLT0417-L2-FRZ02' },
     ],
   },
   {
     name: 'line_3',
-    display_name: 'Line 3',
+    display_name: 'Aurora 3',
     freezer_count: 2,
-    asset_id: 'DEMO-L3',
+    asset_id: 'PLT0417-L3',
     freezers: [
-      { freezer_number: 1, pump_count: 2, asset_id: 'DEMO-L3-FRZ01' },
-      { freezer_number: 2, pump_count: 2, asset_id: 'DEMO-L3-FRZ02' },
+      { freezer_number: 1, pump_count: 2, asset_id: 'PLT0417-L3-FRZ01' },
+      { freezer_number: 2, pump_count: 2, asset_id: 'PLT0417-L3-FRZ02' },
     ],
   },
 ];
 
-// Demo catalogue for the fictional "Northwind Creamery". These are NOT real
+// Demo catalogue for the fictional Northwind Creamery Company, Aurora Department. These are NOT real
 // products or specifications.
 //
 // How the limits are laid out (same convention the app uses everywhere):
@@ -50,9 +50,9 @@ const DEMO_LINES = [
 // point SEED_FILE at it.
 const DEMO_SKUS = [
   {
-    product_name: 'Vanilla Classic Bars',
+    product_name: 'Aurora Vanilla Classic Bars',
     product_code: '90001001',
-    cr_code: 'DEMO-SPEC-101',
+    cr_code: 'CR-7101_1',
     sort_order: 1,
     startup_cup_weight_target: 112.0,
     thickness_label: 'Slice Thickness',
@@ -63,9 +63,9 @@ const DEMO_SKUS = [
     coating_target: 22.5, coating_lcl: 20.1, coating_lwl: 21.3, coating_uwl: 23.7, coating_ucl: 24.9,
   },
   {
-    product_name: 'Toffee Crunch Bars',
+    product_name: 'Aurora Toffee Crunch Bars',
     product_code: '90001002',
-    cr_code: 'DEMO-SPEC-102',
+    cr_code: 'CR-7102_1',
     sort_order: 2,
     startup_cup_weight_target: 109.0,
     thickness_label: 'Slice Thickness',
@@ -76,9 +76,9 @@ const DEMO_SKUS = [
     coating_target: 20.0, coating_lcl: 17.4, coating_lwl: 18.7, coating_uwl: 21.3, coating_ucl: 22.6,
   },
   {
-    product_name: 'Crispy Rice Bars',
+    product_name: 'Aurora Crispy Rice Bars',
     product_code: '90001003',
-    cr_code: 'DEMO-SPEC-103',
+    cr_code: 'CR-7103_1',
     sort_order: 3,
     startup_cup_weight_target: 112.5,
     thickness_label: 'Slice Thickness',
@@ -89,9 +89,9 @@ const DEMO_SKUS = [
     coating_target: 24.0, coating_lcl: 21.6, coating_lwl: 22.8, coating_uwl: 25.2, coating_ucl: 26.4,
   },
   {
-    product_name: 'Peanut Butter Swirl Bars',
+    product_name: 'Aurora Peanut Butter Swirl Bars',
     product_code: '90001004',
-    cr_code: 'DEMO-SPEC-104',
+    cr_code: 'CR-7104_1',
     sort_order: 4,
     startup_cup_weight_target: 110.0,
     thickness_label: 'Slice Thickness',
@@ -102,9 +102,9 @@ const DEMO_SKUS = [
     coating_target: 17.5, coating_lcl: 16.3, coating_lwl: 16.9, coating_uwl: 18.1, coating_ucl: 18.7,
   },
   {
-    product_name: 'Dark Chocolate Bars',
+    product_name: 'Aurora Dark Chocolate Bars',
     product_code: '90001005',
-    cr_code: 'DEMO-SPEC-105',
+    cr_code: 'CR-7105_1',
     sort_order: 5,
     startup_cup_weight_target: 112.0,
     thickness_label: 'Slice Thickness',
@@ -115,9 +115,9 @@ const DEMO_SKUS = [
     coating_target: 22.8, coating_lcl: 20.4, coating_lwl: 21.6, coating_uwl: 24.0, coating_ucl: 25.2,
   },
   {
-    product_name: 'Double Chocolate Bars',
+    product_name: 'Aurora Double Chocolate Bars',
     product_code: '90001006',
-    cr_code: 'DEMO-SPEC-106',
+    cr_code: 'CR-7106_1',
     sort_order: 6,
     startup_cup_weight_target: 112.0,
     thickness_label: 'Slice Thickness',
@@ -128,9 +128,9 @@ const DEMO_SKUS = [
     coating_target: 23.4, coating_lcl: 21.0, coating_lwl: 22.2, coating_uwl: 24.6, coating_ucl: 25.8,
   },
   {
-    product_name: 'No Sugar Added Crispy Bars',
+    product_name: 'Aurora No Sugar Added Crispy Bars',
     product_code: '90001007',
-    cr_code: 'DEMO-SPEC-107',
+    cr_code: 'CR-7107_1',
     sort_order: 7,
     startup_cup_weight_target: 112.0,
     thickness_label: 'Slice Thickness',
@@ -141,9 +141,9 @@ const DEMO_SKUS = [
     coating_target: 15.8, coating_lcl: 13.4, coating_lwl: 14.6, coating_uwl: 17.0, coating_ucl: 18.2,
   },
   {
-    product_name: 'Light Vanilla Bars',
+    product_name: 'Aurora Light Vanilla Bars',
     product_code: '90001008',
-    cr_code: 'DEMO-SPEC-108',
+    cr_code: 'CR-7108_1',
     sort_order: 8,
     startup_cup_weight_target: 112.0,
     thickness_label: 'Slice Thickness',
@@ -154,9 +154,9 @@ const DEMO_SKUS = [
     coating_target: 18.4, coating_lcl: 16.0, coating_lwl: 17.2, coating_uwl: 19.6, coating_ucl: 20.8,
   },
   {
-    product_name: 'Peanut Butter Cup Bars',
+    product_name: 'Aurora Peanut Butter Cup Bars',
     product_code: '90001009',
-    cr_code: 'DEMO-SPEC-109',
+    cr_code: 'CR-7109_1',
     sort_order: 9,
     startup_cup_weight_target: 110.5,
     thickness_label: 'Slice Thickness',
@@ -167,9 +167,9 @@ const DEMO_SKUS = [
     coating_target: 18.6, coating_lcl: 16.2, coating_lwl: 17.4, coating_uwl: 19.8, coating_ucl: 21.0,
   },
   {
-    product_name: 'Classic Multipack Bars',
+    product_name: 'Aurora Classic Multipack Bars',
     product_code: '90001010',
-    cr_code: 'DEMO-SPEC-110',
+    cr_code: 'CR-7110_1',
     sort_order: 10,
     startup_cup_weight_target: 112.0,
     thickness_label: 'Slice Thickness',
@@ -180,9 +180,9 @@ const DEMO_SKUS = [
     coating_target: 22.6, coating_lcl: 20.2, coating_lwl: 21.4, coating_uwl: 23.8, coating_ucl: 25.0,
   },
   {
-    product_name: 'Mint Chip Bars',
+    product_name: 'Aurora Mint Chip Bars',
     product_code: '90001011',
-    cr_code: 'DEMO-SPEC-111',
+    cr_code: 'CR-7111_1',
     sort_order: 11,
     startup_cup_weight_target: 111.5,
     thickness_label: 'Slice Thickness',
@@ -193,9 +193,9 @@ const DEMO_SKUS = [
     coating_target: 21.0, coating_lcl: 18.6, coating_lwl: 19.8, coating_uwl: 22.2, coating_ucl: 23.4,
   },
   {
-    product_name: 'Cookies & Cream Bars',
+    product_name: 'Aurora Cookies & Cream Bars',
     product_code: '90001012',
-    cr_code: 'DEMO-SPEC-112',
+    cr_code: 'CR-7112_1',
     sort_order: 12,
     startup_cup_weight_target: 111.5,
     thickness_label: 'Slice Thickness',

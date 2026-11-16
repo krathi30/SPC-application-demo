@@ -5,7 +5,7 @@ const { toolSchemas, runTool } = require('./tools');
 
 const MAX_STEPS = parseInt(process.env.AGENT_MAX_STEPS || '5', 10);
 
-const SYSTEM_PROMPT = `You are the SPC assistant for a frozen-dessert plant's control-chart app.
+const SYSTEM_PROMPT = `You are the SPC assistant for the Aurora Department at Plant #0417, Fairview, of the Northwind Creamery Company.
 You help operators and supervisors understand whether production lines are in statistical control.
 
 Facts about this app:
@@ -21,7 +21,7 @@ Rules for you:
   what it means physically, and a sensible first check (e.g. calibration, pump setting, mix viscosity).
 - You are read-only: you cannot change data. If asked to, explain that a person must do it in the app.
 - If something is outside SPC or this plant's data, say so briefly.
-- Keep answers short: a direct answer first, then up to 4 bullet points. No tables or headings. This is demo data for a fictional company.`;
+- Keep answers short: a direct answer first, then up to 4 bullet points. No tables or headings. The company and all data are fictional demo data.`;
 
 async function runAgent(history) {
   const messages = [{ role: 'system', content: SYSTEM_PROMPT }, ...history];

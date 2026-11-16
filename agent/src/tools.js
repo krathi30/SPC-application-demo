@@ -13,10 +13,11 @@ async function api(path) {
 async function findLine(line) {
   const lines = await api('/lines');
   const wanted = String(line).trim().toLowerCase();
-  const match = lines.find((l) => String(l.id) === wanted
-    || l.display_name.toLowerCase() === wanted
-    || l.display_name.toLowerCase() === `line ${wanted}`
-    || l.name.toLowerCase() === wanted);
+  // Accept "Aurora 2", "Line 2", "line_2" or just "2".
+  const number = (wanted.match(/(\d+)\s*$/) || [])[1];
+  const lineNumber = (l) => (`${l.display_name} ${l.name}`.match(/(\d+)\s*$/) || [])[1];
+  const match = lines.find((l) => l.display_name.toLowerCase() === wanted || l.name.toLowerCase() === wanted)
+    || (number && lines.find((l) => lineNumber(l) === number));
   if (!match) throw new Error(`No line called "${line}". Known lines: ${lines.map((l) => l.display_name).join(', ')}`);
   return match;
 }
