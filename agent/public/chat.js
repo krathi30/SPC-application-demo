@@ -54,8 +54,7 @@
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
       history.push({ role: 'assistant', content: data.answer });
-      const tools = (data.tools_used || []).map((t) => `<span>${escapeHtml(t.tool)}</span>`).join('');
-      pending.innerHTML = format(data.answer) + (tools ? `<div class="tools">Looked up: ${tools}</div>` : '');
+      pending.innerHTML = format(data.answer);
     } catch (err) {
       history.pop();
       pending.className = 'msg error';
