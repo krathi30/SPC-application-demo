@@ -45,6 +45,8 @@ test('agent calls a tool, gets exact stats, and answers', async (t) => {
 
   process.env.BACKEND_URL = `http://127.0.0.1:${backend.address().port}`;
   process.env.LLM_BASE_URL = `http://127.0.0.1:${model.address().port}`;
+  process.env.LLM_MODEL = 'main-model';
+  process.env.LLM_FALLBACK_MODELS = 'backup-model';
   for (const k of Object.keys(require.cache)) if (k.includes('/agent/src/')) delete require.cache[k];
   const { runAgent } = require('../src/agent');
 
@@ -53,6 +55,7 @@ test('agent calls a tool, gets exact stats, and answers', async (t) => {
   assert.deepStrictEqual(result.tools_used.map((x) => x.tool), ['analyze_line']);
   assert.ok(seen[0].tools.length >= 4, 'tool schemas are sent to the model');
   assert.strictEqual(seen[0].messages[0].role, 'system');
+  assert.deepStrictEqual(seen[0].models, ['main-model', 'backup-model'], 'fallback models are sent in order');
 });
 
 test('browser cannot inject system or tool messages', () => {

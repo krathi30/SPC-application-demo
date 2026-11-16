@@ -4,6 +4,8 @@ const config = {
   baseUrl: (process.env.LLM_BASE_URL || 'https://openrouter.ai/api/v1').replace(/\/$/, ''),
   apiKey: process.env.LLM_API_KEY || '',
   model: process.env.LLM_MODEL || 'openrouter/free',
+  // OpenRouter only: models to try in order if the main one is down or busy.
+  fallbackModels: (process.env.LLM_FALLBACK_MODELS || '').split(',').map((m) => m.trim()).filter(Boolean),
   maxTokens: parseInt(process.env.LLM_MAX_TOKENS || '700', 10),
   timeoutMs: parseInt(process.env.LLM_TIMEOUT_MS || '60000', 10),
 };
@@ -18,6 +20,7 @@ async function chat(messages, tools) {
     },
     body: JSON.stringify({
       model: config.model,
+      ...(config.fallbackModels.length ? { models: [config.model, ...config.fallbackModels] } : {}),
       messages,
       tools,
       tool_choice: 'auto',

@@ -21,7 +21,7 @@ Rules for you:
   what it means physically, and a sensible first check (e.g. calibration, pump setting, mix viscosity).
 - You are read-only: you cannot change data. If asked to, explain that a person must do it in the app.
 - If something is outside SPC or this plant's data, say so briefly.
-- Keep answers short: a direct answer first, then up to 4 bullet points. This is demo data for a fictional company.`;
+- Keep answers short: a direct answer first, then up to 4 bullet points. No tables or headings. This is demo data for a fictional company.`;
 
 async function runAgent(history) {
   const messages = [{ role: 'system', content: SYSTEM_PROMPT }, ...history];

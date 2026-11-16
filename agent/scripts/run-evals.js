@@ -21,7 +21,7 @@ const DELAY_MS = parseInt(process.env.EVAL_DELAY_MS || '4000', 10); // stay unde
       result = { answer: `ERROR: ${err.message}`, tools_used: [] };
     }
     const used = result.tools_used.map((t) => t.tool);
-    const text = result.answer.toLowerCase();
+    const text = result.answer.toLowerCase().replace(/[\u2018\u2019]/g, "'");
     const toolsOk = c.expect_tools.every((t) => used.includes(t));
     const anyOk = !c.expect_any || c.expect_any.some((s) => text.includes(s.toLowerCase()));
     const allOk = !c.expect_all || c.expect_all.every((s) => text.includes(s.toLowerCase()));

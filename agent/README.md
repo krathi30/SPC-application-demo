@@ -36,7 +36,8 @@ Rules: **R1** point outside control limits, **R2** 2 of 3 outside a warning limi
 |----------|---------|---------|
 | `LLM_BASE_URL` | `https://openrouter.ai/api/v1` | Any OpenAI-compatible API |
 | `LLM_API_KEY` | (none) | Your key. Never commit it. |
-| `LLM_MODEL` | `openrouter/free` | Model id; swap without code changes |
+| `LLM_MODEL` | `openrouter/free` (compose: `nvidia/nemotron-3.5-lightning:free`) | Model id; swap without code changes |
+| `LLM_FALLBACK_MODELS` | (none; compose: `openrouter/free`) | Comma-separated backups tried in order (OpenRouter only) |
 | `AGENT_DAILY_LIMIT` | 40 | Questions per day, all visitors |
 | `AGENT_PER_MINUTE` | 6 | Questions per minute, per visitor |
 
