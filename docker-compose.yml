@@ -1,0 +1,160 @@
+# Fixed project name so container/network names are the same on every machine.
+name: spc-demo
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    container_name: spc-database
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: spc_db
+      POSTGRES_USER: spc_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env (see .env.example)}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backups:/backups
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U spc_user -d spc_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Node.js Backend API
+  backend:
+    image: spc-backend:${APP_TAG:-fixed}
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: spc-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-1}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      APP_ORIGIN: ${APP_ORIGIN:-}
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: spc_db
+      DB_USER: spc_user
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env (see .env.example)}
+      SPC_IMAGE_ROOT: /data/spc-images
+      SPC_BACKUP_ROOT: /backups
+      REQUEST_LOG_DIR: /data/logs
+      EMAIL_ATTACHMENT_ROOT: /data/email-attachments
+      EMAIL_TIME_ZONE: America/Chicago
+      EMAIL_DAILY_DIGEST_TIME: ${EMAIL_DAILY_DIGEST_TIME:-23:55}
+      EMAIL_POLL_INTERVAL_MS: ${EMAIL_POLL_INTERVAL_MS:-15000}
+      EMAIL_MAX_ATTEMPTS: ${EMAIL_MAX_ATTEMPTS:-5}
+      EMAIL_DIGEST_LOOKBACK_DAYS: ${EMAIL_DIGEST_LOOKBACK_DAYS:-7}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_REJECT_UNAUTHORIZED: ${SMTP_REJECT_UNAUTHORIZED:-true}
+    volumes:
+      - ./data:/data
+      - ./backups:/backups
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://127.0.0.1:3001/api/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # Email worker
+  email-worker:
+    image: spc-backend:${APP_TAG:-fixed}
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: spc-email-worker
+    restart: unless-stopped
+    command: ["node", "src/workers/emailWorker.js"]
+    environment:
+      NODE_ENV: production
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: spc_db
+      DB_USER: spc_user
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env (see .env.example)}
+      SPC_IMAGE_ROOT: /data/spc-images
+      SPC_BACKUP_ROOT: /backups
+      REQUEST_LOG_DIR: /data/logs
+      EMAIL_ATTACHMENT_ROOT: /data/email-attachments
+      EMAIL_TIME_ZONE: America/Chicago
+      EMAIL_DAILY_DIGEST_TIME: ${EMAIL_DAILY_DIGEST_TIME:-23:55}
+      EMAIL_POLL_INTERVAL_MS: ${EMAIL_POLL_INTERVAL_MS:-15000}
+      EMAIL_MAX_ATTEMPTS: ${EMAIL_MAX_ATTEMPTS:-5}
+      EMAIL_DIGEST_LOOKBACK_DAYS: ${EMAIL_DIGEST_LOOKBACK_DAYS:-7}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_REJECT_UNAUTHORIZED: ${SMTP_REJECT_UNAUTHORIZED:-true}
+    volumes:
+      - ./data:/data
+      - ./backups:/backups
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Nginx Frontend
+  frontend:
+    image: spc-frontend:${APP_TAG:-fixed}
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: /api
+    container_name: spc-frontend
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-80}:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  # AI assistant: read-only agent that calls the backend API and an
+  # OpenAI-compatible model API. Optional: the app runs without it.
+  agent:
+    image: spc-agent:${APP_TAG:-fixed}
+    build:
+      context: ./agent
+      dockerfile: Dockerfile
+    container_name: spc-agent
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      BACKEND_URL: http://backend:3001
+      TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-1}
+      LLM_BASE_URL: ${LLM_BASE_URL:-https://openrouter.ai/api/v1}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-nvidia/nemotron-3.5-lightning:free}
+      LLM_FALLBACK_MODELS: ${LLM_FALLBACK_MODELS:-openrouter/free}
+      AGENT_DAILY_LIMIT: ${AGENT_DAILY_LIMIT:-40}
+      AGENT_PER_MINUTE: ${AGENT_PER_MINUTE:-6}
+    mem_limit: 192m
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002/api/agent/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+    driver: local

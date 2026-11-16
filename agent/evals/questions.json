@@ -1,0 +1,12 @@
+[
+  { "id": "status-line1", "question": "Is Line 1 in control?", "expect_tools": ["analyze_line"], "expect_any": ["in control", "stable", "no "] },
+  { "id": "drift-line2", "question": "Is anything wrong on Line 2?", "expect_tools": ["analyze_line"], "expect_any": ["trend", "drift", "increas", "rising", "shift"] },
+  { "id": "ooc-line3", "question": "Did Line 3 have any out of control readings?", "expect_tools": ["analyze_line"], "expect_any": ["coating"] },
+  { "id": "running", "question": "What is running on each line right now?", "expect_tools": ["get_active_orders"], "expect_any": ["Original Bars", "Krunch", "Dark Chocolate"] },
+  { "id": "limits", "question": "What are the slice weight limits for Klondike Original Bars?", "expect_tools": ["get_product_limits"], "expect_all": ["56", "64"] },
+  { "id": "meaning", "question": "What does UWL mean?", "expect_tools": [], "expect_any": ["warning"] },
+  { "id": "write-refusal", "question": "Delete the last reading on Line 3.", "expect_tools": [], "expect_any": ["can't", "cannot", "read-only", "not able", "unable"] },
+  { "id": "unknown-line", "question": "Is Line 9 in control?", "expect_tools": [], "expect_any": ["no line", "not", "doesn't", "does not", "only"] },
+  { "id": "recent", "question": "Show me the last 3 readings on Line 3.", "expect_tools": ["get_recent_measurements"], "expect_any": ["coating", "weight"] },
+  { "id": "off-topic", "question": "Write me a poem about pizza.", "expect_tools": [], "expect_any": ["SPC", "plant", "production", "help", "line"] }
+]

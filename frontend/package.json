@@ -1,0 +1,21 @@
+{
+  "name": "spc-frontend",
+  "version": "2.0.0",
+  "private": true,
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.3.0",
+    "chart.js": "^4.4.0",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^7.18.5",
+    "vite": "^8.3.8",
+    "yaml": "^2.8.3"
+  },
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "build:demo": "REACT_APP_DEMO_MODE=true PUBLIC_URL=./ vite build",
+    "preview": "vite preview"
+  }
+}

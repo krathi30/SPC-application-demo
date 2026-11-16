@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPC Assistant</title>
+  <link rel="stylesheet" href="chat.css" />
+</head>
+<body>
+  <header class="top">
+    <div>
+      <div class="brand">KLONDIKE</div>
+      <div class="sub">SPC Assistant &middot; demo data</div>
+    </div>
+    <a class="back" href="/">&larr; Back to app</a>
+  </header>
+
+  <main id="log" class="log" aria-live="polite">
+    <div class="msg assistant">
+      <p>Hi! I can check whether lines are in control, explain alarms, and look up product limits. I only read data; I can't change anything.</p>
+      <div class="chips">
+        <button type="button" class="chip">Is Line 1 in control?</button>
+        <button type="button" class="chip">What is running right now?</button>
+        <button type="button" class="chip">What are the limits for Klondike Original Bars?</button>
+      </div>
+    </div>
+  </main>
+
+  <form id="form" class="composer">
+    <textarea id="input" rows="1" maxlength="1000" placeholder="Ask about a line, product or reading..." required></textarea>
+    <button id="send" type="submit">Send</button>
+  </form>
+  <script src="chat.js"></script>
+</body>
+</html>
