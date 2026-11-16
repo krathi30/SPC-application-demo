@@ -1,6 +1,6 @@
-# SPC Control Chart Application - Aurora Department
+# SPC Control Chart Application - Klondike Department
 
-SPC (Statistical Process Control) monitoring application for the Aurora Department at Plant #0417, Fairview, of the Northwind Creamery Company (a fictional demo company). Designed for operators to record quality measurements every 30 minutes from production line freezers using laptops, HMIs, and iPads.
+SPC (Statistical Process Control) monitoring application for the Klondike Department at Plant #1352, Covington. Designed for operators to record quality measurements every 30 minutes from production line freezers using laptops, HMIs, and iPads.
 
 ## Architecture
 
@@ -211,9 +211,8 @@ That script writes a repo-root `.env` file. Docker Compose reads it automaticall
 
 ## Demo Data
 
-All names, lines, products and limits in this repository belong to a fictional company,
-**The Northwind Creamery Company** (Aurora Department, Plant #0417, Fairview) (`backend/src/seeds/seedData.js`). They are not real
-specifications.
+Names are the original ones, but **every number is made up**: product codes, spec codes,
+targets and limits (`backend/src/seeds/seedData.js`). None of them are real specifications.
 
 Every parameter (slice thickness, slice weight, coating weight) has five limits,
 symmetric around the target, with the control limits twice as far out as the
@@ -224,7 +223,7 @@ warning limits:
 | UCL / LCL (control) | target ± 2w | out of control (red, needs acknowledgement) |
 | UWL / LWL (warning) | target ± w | a warning (amber) |
 
-Example, Aurora Vanilla Classic Bars slice weight: target 60.0, w = 2.0, so
+Example, Klondike Original Bars (demo values) slice weight: target 60.0, w = 2.0, so
 LWL/UWL = 58.0 / 62.0 and LCL/UCL = 56.0 / 64.0. The seed refuses to load a
 product whose limits are not in the order LCL ≤ LWL ≤ Target ≤ UWL ≤ UCL.
 

@@ -1,7 +1,7 @@
 {
   "name": "spc-backend",
   "version": "1.0.0",
-  "description": "SPC Control Chart Backend - Aurora Department",
+  "description": "SPC Control Chart Backend - Klondike Department",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",

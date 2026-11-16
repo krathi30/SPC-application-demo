@@ -13,7 +13,7 @@ async function api(path) {
 async function findLine(line) {
   const lines = await api('/lines');
   const wanted = String(line).trim().toLowerCase();
-  // Accept "Aurora 2", "Line 2", "line_2" or just "2".
+  // Accept "Line 2", "line_2", a named line like "Klondike 2", or just "2".
   const number = (wanted.match(/(\d+)\s*$/) || [])[1];
   const lineNumber = (l) => (`${l.display_name} ${l.name}`.match(/(\d+)\s*$/) || [])[1];
   const match = lines.find((l) => l.display_name.toLowerCase() === wanted || l.name.toLowerCase() === wanted)
