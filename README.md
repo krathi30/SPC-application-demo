@@ -79,6 +79,7 @@ docker buildx build --platform linux/amd64 -t spc-frontend:fixed frontend
 - **Operator UI**: `http://<server-ip>/` (port 80)
 - **Admin Dashboard**: `http://<server-ip>/admin`
 - **Master Owner Login**: `http://<server-ip>/admin` using username + password created by `docker exec -it spc-backend node src/scripts/setup-master.js`
+- **AI Assistant**: `http://<server-ip>/chat/` (optional `agent` service, see `agent/README.md`)
 - **API Health Check**: `http://<server-ip>/api/health`
 - **Detailed Health Check**: `http://<server-ip>/api/health/detailed` (requires an admin or master login)
 - Only port 80 is exposed to users. The backend API and PostgreSQL database stay internal to the Docker network.
